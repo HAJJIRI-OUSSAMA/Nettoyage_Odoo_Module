@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_report_prestation" model="ir.actions.report">
+        <field name="name">Prestation Report</field>
+        <field name="model">nettoyage.prestation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">nettoyage_module.report_prestation_template</field>
+        <field name="report_file">nettoyage_module.report_prestation_template</field>
+        <field name="binding_model_id" ref="model_nettoyage_prestation"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_prestation_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Prestation Report</h2>
+                        <div class="row mt32 mb32">
+                            <div class="col-3">
+                                <strong>Name:</strong>
+                                <p t-field="doc.name"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Client:</strong>
+                                <p t-field="doc.client_id"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Date:</strong>
+                                <p t-field="doc.date"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Status:</strong>
+                                <p t-field="doc.statut"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

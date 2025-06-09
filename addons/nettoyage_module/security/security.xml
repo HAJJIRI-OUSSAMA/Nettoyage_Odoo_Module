@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="module_category_nettoyage">
+            <field name="name">Nettoyage</field>
+            <field name="description">Gestion des services de nettoyage</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="group_nettoyage_user" model="res.groups">
+            <field name="name">Utilisateur</field>
+            <field name="category_id" ref="module_category_nettoyage"/>
+        </record>
+
+        <record id="group_nettoyage_manager" model="res.groups">
+            <field name="name">Responsable</field>
+            <field name="category_id" ref="module_category_nettoyage"/>
+            <field name="implied_ids" eval="[(4, ref('group_nettoyage_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+    </data>
+</odoo>

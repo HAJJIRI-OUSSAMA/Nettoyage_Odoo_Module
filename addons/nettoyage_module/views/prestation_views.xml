@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prestation_form" model="ir.ui.view">
+            <field name="name">nettoyage.prestation.form</field>
+            <field name="model">nettoyage.prestation</field>
+            <field name="arch" type="xml">
+                <form string="Prestation de Nettoyage">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="client_id"/>
+                            <field name="employe_id"/>
+                            <field name="date"/>
+                            <field name="duree"/>
+                            <field name="statut"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_prestation_tree" model="ir.ui.view">
+            <field name="name">nettoyage.prestation.tree</field>
+            <field name="model">nettoyage.prestation</field>
+            <field name="arch" type="xml">
+                <tree string="Prestations">
+                    <field name="name"/>
+                    <field name="client_id"/>
+                    <field name="employe_id"/>
+                    <field name="date"/>
+                    <field name="statut"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_prestation_kanban" model="ir.ui.view">
+            <field name="name">nettoyage.prestation.kanban</field>
+            <field name="model">nettoyage.prestation</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <field name="client_id"/>
+                    <field name="statut"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <div>
+                                        Client: <field name="client_id"/>
+                                    </div>
+                                    <div>
+                                        Status: <field name="statut"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_prestation_statistics_form" model="ir.ui.view">
+            <field name="name">nettoyage.prestation.statistics</field>
+            <field name="model">nettoyage.prestation</field>
+            <field name="arch" type="xml">
+                <form string="Statistiques des Prestations">
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-tasks">
+                            <field string="Total Prestations" name="total_prestations" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-clock-o">
+                            <field string="Durée Moyenne" name="avg_duree" widget="statinfo"/>
+                        </button>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_prestation_graph" model="ir.ui.view">
+            <field name="name">nettoyage.prestation.graph</field>
+            <field name="model">nettoyage.prestation</field>
+            <field name="arch" type="xml">
+                <graph string="Prestations Analysis">
+                    <field name="date" type="row"/>
+                    <field name="duree" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="action_prestation" model="ir.actions.act_window">
+            <field name="name">Prestations</field>
+            <field name="res_model">nettoyage.prestation</field>
+            <field name="view_mode">kanban,tree,form,graph</field>
+        </record>
+
+        <menuitem id="nettoyage_menu_root" name="Nettoyage"/>
+        <menuitem id="menu_prestation" 
+                  name="Prestations" 
+                  parent="nettoyage_menu_root"
+                  action="action_prestation"/>
+    </data>
+</odoo>
