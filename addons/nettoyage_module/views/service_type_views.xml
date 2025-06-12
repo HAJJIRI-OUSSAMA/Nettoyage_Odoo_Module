@@ -37,10 +37,16 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem id="menu_service_type"
+        <menuitem id="menu_service_type" 
+                  name="Types de Service" 
+                  parent="nettoyage_menu_root" 
+                  action="action_service_type" 
+                  sequence="20"/>
+
+        <menuitem id="menu_service_types"
                   name="Types de Service"
-                  parent="nettoyage_menu_root"
-                  action="action_service_type"
-                  sequence="30"/>
+                  parent="menu_nettoyage_config"
+                  action="nettoyage_module.action_service_type"
+                  sequence="10"/>
     </data>
 </odoo>

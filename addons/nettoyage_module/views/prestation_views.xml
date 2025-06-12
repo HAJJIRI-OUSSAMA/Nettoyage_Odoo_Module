@@ -6,17 +6,80 @@
             <field name="model">nettoyage.prestation</field>
             <field name="arch" type="xml">
                 <form string="Prestation de Nettoyage">
+                    <header>
+                        <field name="statut" widget="statusbar"/>
+                    </header>
                     <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Nom de la prestation..."/></h1>
+                        </div>
                         <group>
-                            <field name="name"/>
-                            <field name="client_id"/>
-                            <field name="employe_id"/>
-                            <field name="date"/>
-                            <field name="duree"/>
-                            <field name="statut"/>
+                            <group>
+                                <field name="client_id"/>
+                                <field name="employe_id"/>
+                                <field name="service_type_id"/>
+                                <field name="price"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="duree"/>
+                                <field name="rating"/>
+                            </group>
                         </group>
+                        <notebook>
+                            <page string="Matériels">
+                                <field name="material_ids"/>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
+            </field>
+        </record>
+
+        <record id="view_prestation_kanban" model="ir.ui.view">
+            <field name="name">nettoyage.prestation.kanban</field>
+            <field name="model">nettoyage.prestation</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="statut" class="o_kanban_small_column">
+                    <field name="name"/>
+                    <field name="client_id"/>
+                    <field name="employe_id"/>
+                    <field name="date"/>
+                    <field name="service_type_id"/>
+                    <field name="price"/>
+                    <field name="rating"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="o_kanban_record_top mb-0">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <field name="name"/>
+                                            </strong>
+                                        </div>
+                                        <strong class="float-right text-primary">
+                                            <field name="price" widget="monetary"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_body">
+                                        <div><strong>Client: </strong><field name="client_id"/></div>
+                                        <div><strong>Employé: </strong><field name="employe_id"/></div>
+                                        <div><strong>Service: </strong><field name="service_type_id"/></div>
+                                        <div><strong>Date: </strong><field name="date"/></div>
+                                        <div t-if="record.rating.raw_value != '0'">
+                                            <strong>Évaluation: </strong>
+                                            <field name="rating" widget="priority"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
             </field>
         </record>
 
@@ -24,26 +87,56 @@
             <field name="name">nettoyage.prestation.tree</field>
             <field name="model">nettoyage.prestation</field>
             <field name="arch" type="xml">
-                <tree string="Prestations">
+                <tree decoration-info="statut=='planifiee'" 
+                      decoration-warning="statut=='en_cours'"
+                      decoration-success="statut=='terminee'">
                     <field name="name"/>
                     <field name="client_id"/>
                     <field name="employe_id"/>
                     <field name="date"/>
+                    <field name="service_type_id"/>
+                    <field name="duree"/>
+                    <field name="price"/>
+                    <field name="rating"/>
                     <field name="statut"/>
                 </tree>
+            </field>
+        </record>
+
+        <record id="view_prestation_statistics" model="ir.ui.view">
+            <field name="name">nettoyage.prestation.statistics</field>
+            <field name="model">nettoyage.prestation</field>
+            <field name="arch" type="xml">
+                <form string="Statistiques">
+                    <group>
+                        <field name="stat_count"/>
+                        <field name="stat_hours"/>
+                        <field name="stat_revenue"/>
+                    </group>
+                </form>
             </field>
         </record>
 
         <record id="action_prestation" model="ir.actions.act_window">
             <field name="name">Prestations</field>
             <field name="res_model">nettoyage.prestation</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">kanban,tree,form,graph,pivot</field>
         </record>
 
-        <menuitem id="nettoyage_menu_root" name="Nettoyage"/>
-        <menuitem id="menu_prestation" 
+        <!-- Menu Structure -->
+        <menuitem id="menu_nettoyage_root" 
+                  name="Nettoyage" 
+                  sequence="10"/>
+
+        <menuitem id="menu_nettoyage_main" 
                   name="Prestations" 
-                  parent="nettoyage_menu_root"
-                  action="action_prestation"/>
+                  parent="menu_nettoyage_root"
+                  action="action_prestation"
+                  sequence="10"/>
+
+        <menuitem id="menu_nettoyage_config" 
+                  name="Configuration" 
+                  parent="menu_nettoyage_root" 
+                  sequence="100"/>
     </data>
 </odoo>

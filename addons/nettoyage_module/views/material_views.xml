@@ -7,12 +7,18 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Nom du matériel..."/></h1>
+                        </div>
                         <group>
-                            <field name="name"/>
-                            <field name="quantity"/>
-                            <field name="state"/>
-                            <field name="last_maintenance"/>
-                            <field name="next_maintenance"/>
+                            <group>
+                                <field name="quantity"/>
+                                <field name="state"/>
+                            </group>
+                            <group>
+                                <field name="last_maintenance"/>
+                                <field name="next_maintenance"/>
+                            </group>
                         </group>
                     </sheet>
                 </form>
@@ -31,10 +37,37 @@
             </field>
         </record>
 
+        <record id="view_material_kanban" model="ir.ui.view">
+            <field name="name">nettoyage.material.kanban</field>
+            <field name="model">nettoyage.material</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state">
+                    <field name="name"/>
+                    <field name="quantity"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong><field name="name"/></strong>
+                                    <div>
+                                        Quantité: <field name="quantity"/>
+                                    </div>
+                                    <div>
+                                        État: <field name="state"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
         <record id="action_material" model="ir.actions.act_window">
             <field name="name">Matériels</field>
             <field name="res_model">nettoyage.material</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">kanban,tree,form</field>
         </record>
 
         <menuitem id="menu_material"
@@ -42,5 +75,26 @@
                   parent="nettoyage_menu_root"
                   action="action_material"
                   sequence="40"/>
+
+        <record id="view_material_search" model="ir.ui.view">
+            <field name="name">nettoyage.material.search</field>
+            <field name="model">nettoyage.material</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <filter name="available" string="Disponible" domain="[('state', '=', 'available')]"/>
+                    <filter name="maintenance" string="En Maintenance" domain="[('state', '=', 'maintenance')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="État" name="group_by_state" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <menuitem id="menu_materials"
+                  name="Matériels"
+                  parent="menu_nettoyage_config"
+                  action="nettoyage_module.action_material"
+                  sequence="20"/>
     </data>
 </odoo>

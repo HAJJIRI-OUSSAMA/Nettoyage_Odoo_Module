@@ -15,8 +15,11 @@ class PrestationNettoyage(models.Model):
         ('terminee', 'Terminée')
     ], default='planifiee', string='Statut')
 
-    total_prestations = fields.Integer(compute='_compute_statistics')
-    avg_duree = fields.Float(compute='_compute_statistics')
+    # Statistics fields
+    stat_count = fields.Integer(compute='_compute_stats', string='Nombre de Prestations')
+    stat_hours = fields.Float(compute='_compute_stats', string='Heures Totales')
+    stat_revenue = fields.Float(compute='_compute_stats', string='Revenus Totaux')
+
     service_type_id = fields.Many2one('nettoyage.service.type', string='Type de Service')
     material_ids = fields.Many2many('nettoyage.material', string='Matériels Utilisés')
     price = fields.Float(compute='_compute_price', store=True)
@@ -29,13 +32,13 @@ class PrestationNettoyage(models.Model):
         ('4', 'Très Satisfait')
     ], default='0', string='Évaluation Client')
 
-    @api.depends('duree')
-    def _compute_statistics(self):
+    @api.depends('price', 'duree')
+    def _compute_stats(self):
+        prestations = self.env['nettoyage.prestation'].search([])
         for record in self:
-            prestations = self.search([])
-            record.total_prestations = len(prestations)
-            durees = prestations.mapped('duree')
-            record.avg_duree = sum(durees) / len(durees) if durees else 0.0
+            record.stat_count = len(prestations)
+            record.stat_hours = sum(prestations.mapped('duree'))
+            record.stat_revenue = sum(prestations.mapped('price'))
 
     @api.depends('service_type_id', 'duree')
     def _compute_price(self):
